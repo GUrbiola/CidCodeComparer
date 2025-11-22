@@ -67,8 +67,8 @@ namespace CidCodeComparer.Forms
             this.diffViewerControl.IgnoreWhitespace = false;
             this.diffViewerControl.Location = new System.Drawing.Point(0, 24);
             this.diffViewerControl.Name = "diffViewerControl";
-            this.diffViewerControl.ShowJumpButtons = false;
-            this.diffViewerControl.ShowSummaryPanel = false;
+            this.diffViewerControl.ShowJumpButtons = true;
+            this.diffViewerControl.ShowSummaryPanel = true;
             this.diffViewerControl.SimilarityThreshold = 1D;
             this.diffViewerControl.Size = new System.Drawing.Size(884, 591);
             this.diffViewerControl.TabIndex = 2;
@@ -120,6 +120,7 @@ namespace CidCodeComparer.Forms
             this.Name = "DiffViewerTestDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Diff Viewer Test Dialog";
+            this.WindowState = System.Windows.Forms.FormWindowState.Maximized;
             this.menuStrip1.ResumeLayout(false);
             this.menuStrip1.PerformLayout();
             this.ResumeLayout(false);

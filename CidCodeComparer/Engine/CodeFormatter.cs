@@ -60,12 +60,14 @@ namespace CidCodeComparer.Engine
             var lines = _code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
             var formattedLines = new List<string>();
             int currentIndentLevel = _baseIndentLevel;
+            bool indentNextLine = false;
+            bool unindentAfterThisLine = false;
 
             foreach (var line in lines)
             {
                 string trimmedLine = line.Trim();
 
-                // Skip empty lines but preserve them
+                // Skip empty lines but preserve them (don't affect single-statement indentation)
                 if (string.IsNullOrWhiteSpace(trimmedLine))
                 {
                     formattedLines.Add(string.Empty);
@@ -76,6 +78,14 @@ namespace CidCodeComparer.Engine
                 int openBraces = CountChar(trimmedLine, '{');
                 int closeBraces = CountChar(trimmedLine, '}');
 
+                // If we need to indent this line (from previous control structure)
+                if (indentNextLine)
+                {
+                    currentIndentLevel++;
+                    indentNextLine = false;
+                    unindentAfterThisLine = true;
+                }
+
                 // Decrease indent if line starts with closing brace
                 if (trimmedLine.StartsWith("}"))
                 {
@@ -85,6 +95,9 @@ namespace CidCodeComparer.Engine
                 // Add the line with proper indentation
                 string indent = string.Concat(Enumerable.Repeat(_indentString, currentIndentLevel));
                 formattedLines.Add(indent + trimmedLine);
+
+                // Check if this line is a control structure without braces (single-line statement follows)
+                bool isSingleStatementControl = IsControlStructureWithoutBrace(trimmedLine);
 
                 // Adjust indent level based on braces
                 int netBraceChange = openBraces - closeBraces;
@@ -106,11 +119,129 @@ namespace CidCodeComparer.Engine
                     // Normal line - just apply net change
                     currentIndentLevel = Math.Max(0, currentIndentLevel + netBraceChange);
                 }
+
+                // If this line was indented due to single-statement control, unindent now
+                if (unindentAfterThisLine)
+                {
+                    currentIndentLevel = Math.Max(0, currentIndentLevel - 1);
+                    unindentAfterThisLine = false;
+                }
+
+                // If this is a control structure without braces, indent the next line
+                if (isSingleStatementControl)
+                {
+                    indentNextLine = true;
+                }
             }
 
             return formattedLines;
         }
 
+
+        /// <summary>
+        /// Checks if a line is a control structure without an opening brace
+        /// </summary>
+        private bool IsControlStructureWithoutBrace(string trimmedLine)
+        {
+            // If line ends with an opening brace, it's not a single-statement control
+            if (trimmedLine.TrimEnd().EndsWith("{"))
+                return false;
+
+            // If line ends with a semicolon, it's a complete statement, not a control structure
+            if (trimmedLine.TrimEnd().EndsWith(";"))
+                return false;
+
+            // Remove strings and comments to avoid false positives
+            string cleanLine = RemoveStringsAndComments(trimmedLine);
+
+            // Control structure keywords that can have single-line statements
+            string[] controlKeywords = { "if", "else", "for", "foreach", "while", "using", "lock" };
+
+            foreach (var keyword in controlKeywords)
+            {
+                // Special case for "else" - it might appear standalone or as "else if"
+                if (keyword == "else")
+                {
+                    // Check if line is exactly "else" or starts with "else if" or "else " followed by non-brace
+                    if (cleanLine == "else" ||
+                        cleanLine.StartsWith("else ") ||
+                        cleanLine.StartsWith("else\t"))
+                    {
+                        return true;
+                    }
+                }
+                else
+                {
+                    // Check if line starts with keyword followed by whitespace or parenthesis
+                    // This ensures we match "if (", "for (", etc., but not "ifSomething"
+                    if (cleanLine.StartsWith(keyword + " ") ||
+                        cleanLine.StartsWith(keyword + "(") ||
+                        cleanLine.StartsWith(keyword + "\t"))
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Removes strings and comments from a line to get clean code
+        /// </summary>
+        private string RemoveStringsAndComments(string line)
+        {
+            var result = new StringBuilder();
+            bool inString = false;
+            bool inChar = false;
+            bool escaped = false;
+
+            for (int i = 0; i < line.Length; i++)
+            {
+                char current = line[i];
+                char next = (i + 1 < line.Length) ? line[i + 1] : '\0';
+
+                if (escaped)
+                {
+                    escaped = false;
+                    continue;
+                }
+
+                if (current == '\\' && (inString || inChar))
+                {
+                    escaped = true;
+                    continue;
+                }
+
+                // Check for line comment - stop processing
+                if (!inString && !inChar && current == '/' && next == '/')
+                {
+                    break;
+                }
+
+                // Handle strings
+                if (current == '"' && !inChar)
+                {
+                    inString = !inString;
+                    continue;
+                }
+
+                // Handle chars
+                if (current == '\'' && !inString)
+                {
+                    inChar = !inChar;
+                    continue;
+                }
+
+                // Add character if not in string or char
+                if (!inString && !inChar)
+                {
+                    result.Append(current);
+                }
+            }
+
+            return result.ToString().Trim();
+        }
 
         /// <summary>
         /// Counts occurrences of a character in a string, excluding those in strings or comments

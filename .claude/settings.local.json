@@ -25,7 +25,9 @@
       "Bash(cmd.exe /c \"cd /d \"\"D:\\Just For Fun\\CidCodeComparer\"\" && \"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\"\" CidCodeComparer.sln //t:Rebuild //p:Configuration=Debug //v:minimal\")",
       "Bash(cmd.exe /c \"cd /d \"\"D:\\Just For Fun\\CidCodeComparer\"\" && \"\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\"\" CidCodeComparer.sln //t:Rebuild //p:Configuration=Debug\")",
       "Bash(powershell.exe -Command \"& ''C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe'' ''D:\\Just For Fun\\CidCodeComparer\\CidCodeComparer\\CidCodeComparer.csproj'' /t:Rebuild /p:Configuration=Debug /v:minimal\")",
-      "Bash(powershell.exe:*)"
+      "Bash(powershell.exe:*)",
+      "Bash(\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\" CidCodeComparer.sln /t:Rebuild /p:Configuration=Debug /v:minimal)",
+      "Bash(\"C:\\Program Files (x86)\\Microsoft Visual Studio\\2019\\BuildTools\\MSBuild\\Current\\Bin\\amd64\\MSBuild.exe\" \"D:\\Just For Fun\\CidCodeComparer\\CidCodeComparer.sln\" -t:Rebuild -p:Configuration=Debug -v:minimal)"
     ],
     "deny": [],
     "ask": []

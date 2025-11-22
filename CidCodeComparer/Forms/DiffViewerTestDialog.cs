@@ -22,11 +22,11 @@ namespace CidCodeComparer.Forms
         private void LoadSampleData()
         {
             // Sample text 1
-            string text1 = File.ReadAllText(@"C:\Users\Gonzalo\Desktop\Extensions\Extensions12.cs");
+            string text1 = File.ReadAllText(@"C:\Users\Gonzalo\Desktop\Extensions\Extensions00.cs");
 
 
             // Sample text 2 (with some differences)
-            string text2 = File.ReadAllText(@"C:\Users\Gonzalo\Desktop\Extensions\Extensions13.cs");
+            string text2 = File.ReadAllText(@"C:\Users\Gonzalo\Desktop\Extensions\Extensions05.cs");
 
             // Load the texts into the diff viewer
             diffViewerControl.SetSyntaxHighlighting(".cs");

@@ -215,7 +215,8 @@ namespace CidCodeComparer.Controls
 
         private string NormalizeWhitespace(string line)
         {
-            return System.Text.RegularExpressions.Regex.Replace(line.Trim(), @"\s+", " ");
+            // Remove all whitespace (spaces, tabs, newlines) and non-printable characters (control characters)
+            return new string(line.Where(c => !char.IsWhiteSpace(c) && !char.IsControl(c)).ToArray());
         }
 
         private List<LineDifference> BuildDifferencesFromTrace(List<Dictionary<int, int>> trace, string[] file1Lines, string[] file2Lines, int d)

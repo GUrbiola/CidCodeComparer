@@ -9,6 +9,9 @@ namespace CidCodeComparer.Engine
 {
     public class ComparisonEngine
     {
+        /// <summary>
+        /// When true, ignores all whitespace (spaces, tabs, newlines) and non-printable characters when comparing lines
+        /// </summary>
         public bool IgnoreWhitespace { get; set; } = true;
 
         public ComparisonResult CompareFiles(string file1Path, string file2Path, string fileType)
@@ -137,9 +140,9 @@ namespace CidCodeComparer.Engine
         {
             if (IgnoreWhitespace)
             {
-                // Remove all whitespace and compare
-                string normalized1 = new string(line1.Where(c => !char.IsWhiteSpace(c)).ToArray());
-                string normalized2 = new string(line2.Where(c => !char.IsWhiteSpace(c)).ToArray());
+                // Remove all whitespace (spaces, tabs, newlines) and non-printable characters (control characters) and compare
+                string normalized1 = new string(line1.Where(c => !char.IsWhiteSpace(c) && !char.IsControl(c)).ToArray());
+                string normalized2 = new string(line2.Where(c => !char.IsWhiteSpace(c) && !char.IsControl(c)).ToArray());
                 return normalized1 == normalized2;
             }
             else

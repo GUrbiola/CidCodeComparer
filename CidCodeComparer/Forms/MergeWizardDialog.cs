@@ -129,7 +129,8 @@ namespace CidCodeComparer.Forms
         {
             if (string.IsNullOrEmpty(sourceCode))
                 return string.Empty;
-            return sourceCode.Trim().Replace("\r\n", "\n").Replace("\r", "\n");
+            // Remove all whitespace (spaces, tabs, newlines) and non-printable characters (control characters)
+            return new string(sourceCode.Where(c => !char.IsWhiteSpace(c) && !char.IsControl(c)).ToArray());
         }
 
         private void LoadGreenNodes()

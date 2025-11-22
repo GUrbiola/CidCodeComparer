@@ -115,7 +115,7 @@ namespace CidCodeComparer
         {
             try
             {
-                var engine = new ComparisonEngine();
+                var engine = new ComparisonEngine() { IgnoreWhitespace = true };
                 var result = engine.CompareFiles(_file1Path, _file2Path, _fileType);
 
                 if (this.InvokeRequired)
@@ -416,8 +416,8 @@ namespace CidCodeComparer
             if (string.IsNullOrEmpty(sourceCode))
                 return string.Empty;
 
-            // Remove leading/trailing whitespace and normalize line endings
-            return sourceCode.Trim().Replace("\r\n", "\n").Replace("\r", "\n");
+            // Remove all whitespace (spaces, tabs, newlines) and non-printable characters (control characters)
+            return new string(sourceCode.Where(c => !char.IsWhiteSpace(c) && !char.IsControl(c)).ToArray());
         }
 
         private void treeView1_NodeMouseDoubleClick(object sender, TreeNodeMouseClickEventArgs e)
