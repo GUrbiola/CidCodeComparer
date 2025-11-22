@@ -1,4 +1,5 @@
 using CidCodeComparer.Controls;
+using CidCodeComparer.Engine;
 using CidCodeComparer.Models;
 using System;
 using System.Collections.Generic;
@@ -22,14 +23,10 @@ namespace CidCodeComparer.Forms
         private List<CodeNode> _yellowNodes;
         private List<CodeNode> _whiteNodes;
 
-        private Dictionary<CodeNode, bool> _greenDecisions;
-        private Dictionary<CodeNode, bool> _redDecisions;
         private Dictionary<CodeNode, CodeNode> _yellowDecisions; // Maps to chosen node (left or right)
+        private int _currentYellowIndex;
 
         private int _currentStep;
-        private int _currentGreenIndex;
-        private int _currentRedIndex;
-        private int _currentYellowIndex;
 
         public MergeWizardDialog(CodeNode class1, CodeNode class2,
             Dictionary<string, CodeNode> file1Nodes, Dictionary<string, CodeNode> file2Nodes)
@@ -41,16 +38,13 @@ namespace CidCodeComparer.Forms
             _file1Nodes = file1Nodes;
             _file2Nodes = file2Nodes;
 
-            _greenDecisions = new Dictionary<CodeNode, bool>();
-            _redDecisions = new Dictionary<CodeNode, bool>();
             _yellowDecisions = new Dictionary<CodeNode, CodeNode>();
-
-            _currentStep = 0;
-            _currentGreenIndex = 0;
-            _currentRedIndex = 0;
             _currentYellowIndex = 0;
+            _currentStep = 0;
 
             AnalyzeClassDifferences();
+            LoadGreenNodes();
+            LoadRedNodes();
             ShowCurrentStep();
         }
 
@@ -138,6 +132,36 @@ namespace CidCodeComparer.Forms
             return sourceCode.Trim().Replace("\r\n", "\n").Replace("\r", "\n");
         }
 
+        private void LoadGreenNodes()
+        {
+            checkedListBoxGreen.Items.Clear();
+            foreach (var node in _greenNodes)
+            {
+                string displayText = GetNodeDisplayText(node);
+                checkedListBoxGreen.Items.Add(displayText, false);
+            }
+        }
+
+        private void LoadRedNodes()
+        {
+            checkedListBoxRed.Items.Clear();
+            foreach (var node in _redNodes)
+            {
+                string displayText = GetNodeDisplayText(node);
+                checkedListBoxRed.Items.Add(displayText, false);
+            }
+        }
+
+        private string GetNodeDisplayText(CodeNode node)
+        {
+            if (node.Type == "Method" && node.Parameters != null && node.Parameters.Count > 0)
+            {
+                var paramTypes = string.Join(", ", node.Parameters.Select(p => $"{p.Type} {p.Name}"));
+                return $"{node.Type}: {node.Name}({paramTypes})";
+            }
+            return $"{node.Type}: {node.Name}";
+        }
+
         private void ShowCurrentStep()
         {
             // Clear all panels
@@ -149,42 +173,17 @@ namespace CidCodeComparer.Forms
             // Step 0: Green nodes
             if (_currentStep == 0 && _greenNodes.Count > 0)
             {
-                if (_currentGreenIndex == 0)
-                {
-                    // Show "Add all green" option
-                    ShowGreenAddAllStep();
-                }
-                else if (_currentGreenIndex <= _greenNodes.Count)
-                {
-                    ShowGreenIndividualStep();
-                }
-                else
-                {
-                    // Move to next step
-                    _currentStep++;
-                    ShowCurrentStep();
-                }
+                panelGreenNodes.Visible = true;
+                UpdateNavigationButtons();
             }
             // Step 1: Red nodes
             else if ((_currentStep == 0 && _greenNodes.Count == 0) || _currentStep == 1)
             {
                 _currentStep = 1;
-
                 if (_redNodes.Count > 0)
                 {
-                    if (_currentRedIndex == 0)
-                    {
-                        ShowRedAddAllStep();
-                    }
-                    else if (_currentRedIndex <= _redNodes.Count)
-                    {
-                        ShowRedIndividualStep();
-                    }
-                    else
-                    {
-                        _currentStep++;
-                        ShowCurrentStep();
-                    }
+                    panelRedNodes.Visible = true;
+                    UpdateNavigationButtons();
                 }
                 else
                 {
@@ -217,64 +216,6 @@ namespace CidCodeComparer.Forms
             }
         }
 
-        private void ShowGreenAddAllStep()
-        {
-            panelGreenNodes.Visible = true;
-            lblGreenQuestion.Text = $"Found {_greenNodes.Count} member(s) only in left class. Add all?";
-            txtGreenNodeInfo.Text = GetNodesSummary(_greenNodes);
-            btnGreenAddThis.Visible = false;
-            btnGreenSkipThis.Visible = false;
-            btnGreenAddAll.Visible = true;
-            btnGreenSkipAll.Visible = true;
-
-            UpdateNavigationButtons();
-        }
-
-        private void ShowGreenIndividualStep()
-        {
-            int index = _currentGreenIndex - 1;
-            var node = _greenNodes[index];
-
-            panelGreenNodes.Visible = true;
-            lblGreenQuestion.Text = $"Add this member? ({index + 1}/{_greenNodes.Count})";
-            txtGreenNodeInfo.Text = GetNodeInfo(node);
-            btnGreenAddThis.Visible = true;
-            btnGreenSkipThis.Visible = true;
-            btnGreenAddAll.Visible = false;
-            btnGreenSkipAll.Visible = false;
-
-            UpdateNavigationButtons();
-        }
-
-        private void ShowRedAddAllStep()
-        {
-            panelRedNodes.Visible = true;
-            lblRedQuestion.Text = $"Found {_redNodes.Count} member(s) only in right class. Add all?";
-            txtRedNodeInfo.Text = GetNodesSummary(_redNodes);
-            btnRedAddThis.Visible = false;
-            btnRedSkipThis.Visible = false;
-            btnRedAddAll.Visible = true;
-            btnRedSkipAll.Visible = true;
-
-            UpdateNavigationButtons();
-        }
-
-        private void ShowRedIndividualStep()
-        {
-            int index = _currentRedIndex - 1;
-            var node = _redNodes[index];
-
-            panelRedNodes.Visible = true;
-            lblRedQuestion.Text = $"Add this member? ({index + 1}/{_redNodes.Count})";
-            txtRedNodeInfo.Text = GetNodeInfo(node);
-            btnRedAddThis.Visible = true;
-            btnRedSkipThis.Visible = true;
-            btnRedAddAll.Visible = false;
-            btnRedSkipAll.Visible = false;
-
-            UpdateNavigationButtons();
-        }
-
         private void ShowYellowIndividualStep()
         {
             var node = _yellowNodes[_currentYellowIndex];
@@ -293,8 +234,9 @@ namespace CidCodeComparer.Forms
             }
 
             panelYellowNodes.Visible = true;
-            lblYellowQuestion.Text = $"Choose which version to keep ({_currentYellowIndex + 1}/{_yellowNodes.Count}):";
+            lblYellowQuestion.Text = $"Choose which version to keep ({_currentYellowIndex + 1}/{_yellowNodes.Count}): {node.Name}";
             diffViewer.LoadTexts(node.SourceCode, matchingNode?.SourceCode ?? "");
+            diffViewer.SetSyntaxHighlighting(".cs");
 
             UpdateNavigationButtons();
         }
@@ -302,40 +244,10 @@ namespace CidCodeComparer.Forms
         private void ShowSaveLocationStep()
         {
             panelSaveLocation.Visible = true;
-            lblSaveLocation.Text = "Choose where to save the merged class:";
-            txtSavePath.Text = "";
 
-            btnBack.Enabled = false;
+            btnBack.Enabled = true;
             btnNext.Enabled = false;
             btnFinish.Visible = true;
-        }
-
-        private string GetNodesSummary(List<CodeNode> nodes)
-        {
-            var sb = new StringBuilder();
-            foreach (var node in nodes)
-            {
-                sb.AppendLine($"- {node.Type}: {node.Name}");
-            }
-            return sb.ToString();
-        }
-
-        private string GetNodeInfo(CodeNode node)
-        {
-            var sb = new StringBuilder();
-            sb.AppendLine($"Type: {node.Type}");
-            sb.AppendLine($"Name: {node.Name}");
-            if (!string.IsNullOrEmpty(node.ReturnType))
-                sb.AppendLine($"Return Type: {node.ReturnType}");
-            if (node.Parameters != null && node.Parameters.Count > 0)
-            {
-                sb.AppendLine($"Parameters: {string.Join(", ", node.Parameters.Select(p => $"{p.Type} {p.Name}"))}");
-            }
-            sb.AppendLine();
-            sb.AppendLine("Source Code:");
-            sb.AppendLine(node.SourceCode);
-
-            return sb.ToString();
         }
 
         private string GetNodeKey(CodeNode node)
@@ -351,81 +263,65 @@ namespace CidCodeComparer.Forms
 
         private void UpdateNavigationButtons()
         {
-            btnBack.Enabled = _currentStep > 0 || _currentGreenIndex > 0 || _currentRedIndex > 0 || _currentYellowIndex > 0;
+            btnBack.Enabled = _currentStep > 0 || _currentYellowIndex > 0;
             btnNext.Enabled = true;
             btnFinish.Visible = false;
         }
 
-        private void btnGreenAddAll_Click(object sender, EventArgs e)
+        private void checkedListBoxGreen_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (var node in _greenNodes)
+            int selectedIndex = checkedListBoxGreen.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _greenNodes.Count)
             {
-                _greenDecisions[node] = true;
+                var node = _greenNodes[selectedIndex];
+                txtGreenPreview.Text = node.SourceCode ?? "";
+                txtGreenPreview.SetHighlighting("C#");
+                txtGreenPreview.Refresh();
             }
-            _currentGreenIndex = _greenNodes.Count + 1;
-            ShowCurrentStep();
         }
 
-        private void btnGreenSkipAll_Click(object sender, EventArgs e)
+        private void checkedListBoxRed_SelectedIndexChanged(object sender, EventArgs e)
         {
-            foreach (var node in _greenNodes)
+            int selectedIndex = checkedListBoxRed.SelectedIndex;
+            if (selectedIndex >= 0 && selectedIndex < _redNodes.Count)
             {
-                _greenDecisions[node] = false;
+                var node = _redNodes[selectedIndex];
+                txtRedPreview.Text = node.SourceCode ?? "";
+                txtRedPreview.SetHighlighting("C#");
+                txtRedPreview.Refresh();
             }
-            _currentGreenIndex = _greenNodes.Count + 1;
-            ShowCurrentStep();
         }
 
-        private void btnGreenAddThis_Click(object sender, EventArgs e)
+        private void btnGreenSelectAll_Click(object sender, EventArgs e)
         {
-            int index = _currentGreenIndex - 1;
-            _greenDecisions[_greenNodes[index]] = true;
-            _currentGreenIndex++;
-            ShowCurrentStep();
-        }
-
-        private void btnGreenSkipThis_Click(object sender, EventArgs e)
-        {
-            int index = _currentGreenIndex - 1;
-            _greenDecisions[_greenNodes[index]] = false;
-            _currentGreenIndex++;
-            ShowCurrentStep();
-        }
-
-        private void btnRedAddAll_Click(object sender, EventArgs e)
-        {
-            foreach (var node in _redNodes)
+            for (int i = 0; i < checkedListBoxGreen.Items.Count; i++)
             {
-                _redDecisions[node] = true;
+                checkedListBoxGreen.SetItemChecked(i, true);
             }
-            _currentRedIndex = _redNodes.Count + 1;
-            ShowCurrentStep();
         }
 
-        private void btnRedSkipAll_Click(object sender, EventArgs e)
+        private void btnGreenSelectNone_Click(object sender, EventArgs e)
         {
-            foreach (var node in _redNodes)
+            for (int i = 0; i < checkedListBoxGreen.Items.Count; i++)
             {
-                _redDecisions[node] = false;
+                checkedListBoxGreen.SetItemChecked(i, false);
             }
-            _currentRedIndex = _redNodes.Count + 1;
-            ShowCurrentStep();
         }
 
-        private void btnRedAddThis_Click(object sender, EventArgs e)
+        private void btnRedSelectAll_Click(object sender, EventArgs e)
         {
-            int index = _currentRedIndex - 1;
-            _redDecisions[_redNodes[index]] = true;
-            _currentRedIndex++;
-            ShowCurrentStep();
+            for (int i = 0; i < checkedListBoxRed.Items.Count; i++)
+            {
+                checkedListBoxRed.SetItemChecked(i, true);
+            }
         }
 
-        private void btnRedSkipThis_Click(object sender, EventArgs e)
+        private void btnRedSelectNone_Click(object sender, EventArgs e)
         {
-            int index = _currentRedIndex - 1;
-            _redDecisions[_redNodes[index]] = false;
-            _currentRedIndex++;
-            ShowCurrentStep();
+            for (int i = 0; i < checkedListBoxRed.Items.Count; i++)
+            {
+                checkedListBoxRed.SetItemChecked(i, false);
+            }
         }
 
         private void btnYellowKeepLeft_Click(object sender, EventArgs e)
@@ -483,58 +379,41 @@ namespace CidCodeComparer.Forms
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            // Handle specific panel actions
-            if (panelGreenNodes.Visible && _currentGreenIndex == 0)
+            // Move to next step
+            if (_currentStep == 0)
             {
-                // Skip green add all
-                _currentGreenIndex = 1;
-                ShowCurrentStep();
+                _currentStep = 1;
             }
-            else if (panelRedNodes.Visible && _currentRedIndex == 0)
+            else if (_currentStep == 1)
             {
-                // Skip red add all
-                _currentRedIndex = 1;
-                ShowCurrentStep();
+                _currentStep = 2;
+                _currentYellowIndex = 0;
+            }
+            else if (_currentStep == 2 && _currentYellowIndex < _yellowNodes.Count)
+            {
+                _currentYellowIndex = _yellowNodes.Count;
             }
             else
             {
-                // Move to next step
-                if (_currentStep == 0 && _currentGreenIndex <= _greenNodes.Count)
-                {
-                    _currentGreenIndex = _greenNodes.Count + 1;
-                }
-                else if (_currentStep == 1 && _currentRedIndex <= _redNodes.Count)
-                {
-                    _currentRedIndex = _redNodes.Count + 1;
-                }
-                else if (_currentStep == 2 && _currentYellowIndex < _yellowNodes.Count)
-                {
-                    _currentYellowIndex = _yellowNodes.Count;
-                }
-
-                ShowCurrentStep();
+                _currentStep++;
             }
+
+            ShowCurrentStep();
         }
 
         private void btnBack_Click(object sender, EventArgs e)
         {
-            if (_currentYellowIndex > 0)
+            if (_currentStep == 2 && _currentYellowIndex > 0)
             {
                 _currentYellowIndex--;
                 ShowCurrentStep();
             }
-            else if (_currentRedIndex > 0)
-            {
-                _currentRedIndex--;
-                ShowCurrentStep();
-            }
-            else if (_currentGreenIndex > 0)
-            {
-                _currentGreenIndex--;
-                ShowCurrentStep();
-            }
             else if (_currentStep > 0)
             {
+                if (_currentStep == 2)
+                {
+                    _currentYellowIndex = 0;
+                }
                 _currentStep--;
                 ShowCurrentStep();
             }
@@ -546,6 +425,13 @@ namespace CidCodeComparer.Forms
             {
                 var sb = new StringBuilder();
 
+                // Get namespace from the textbox
+                string namespaceValue = txtNamespace.Text?.Trim();
+                if (string.IsNullOrEmpty(namespaceValue))
+                {
+                    namespaceValue = "Default";
+                }
+
                 // Add usings (combine from both classes)
                 sb.AppendLine("using System;");
                 sb.AppendLine("using System.Collections.Generic;");
@@ -553,33 +439,39 @@ namespace CidCodeComparer.Forms
                 sb.AppendLine("using System.Text;");
                 sb.AppendLine();
 
-                // Add class declaration
-                sb.AppendLine($"public class {_class1.Name}");
+                // Add namespace
+                sb.AppendLine($"namespace {namespaceValue}");
                 sb.AppendLine("{");
+
+                // Add class declaration
+                sb.AppendLine($"    public class {_class1.Name}");
+                sb.AppendLine("    {");
 
                 // Add white nodes (no differences)
                 foreach (var node in _whiteNodes)
                 {
-                    sb.AppendLine(IndentCode(node.SourceCode, 1));
+                    sb.AppendLine(IndentCode(node.SourceCode, 2));
                     sb.AppendLine();
                 }
 
                 // Add selected green nodes
-                foreach (var kvp in _greenDecisions)
+                for (int i = 0; i < checkedListBoxGreen.Items.Count; i++)
                 {
-                    if (kvp.Value)
+                    if (checkedListBoxGreen.GetItemChecked(i))
                     {
-                        sb.AppendLine(IndentCode(kvp.Key.SourceCode, 1));
+                        var node = _greenNodes[i];
+                        sb.AppendLine(IndentCode(node.SourceCode, 2));
                         sb.AppendLine();
                     }
                 }
 
                 // Add selected red nodes
-                foreach (var kvp in _redDecisions)
+                for (int i = 0; i < checkedListBoxRed.Items.Count; i++)
                 {
-                    if (kvp.Value)
+                    if (checkedListBoxRed.GetItemChecked(i))
                     {
-                        sb.AppendLine(IndentCode(kvp.Key.SourceCode, 1));
+                        var node = _redNodes[i];
+                        sb.AppendLine(IndentCode(node.SourceCode, 2));
                         sb.AppendLine();
                     }
                 }
@@ -587,14 +479,17 @@ namespace CidCodeComparer.Forms
                 // Add selected yellow nodes
                 foreach (var kvp in _yellowDecisions)
                 {
-                    sb.AppendLine(IndentCode(kvp.Value.SourceCode, 1));
+                    sb.AppendLine(IndentCode(kvp.Value.SourceCode, 2));
                     sb.AppendLine();
                 }
 
+                sb.AppendLine("    }");
                 sb.AppendLine("}");
 
-                // Write to file
-                File.WriteAllText(txtSavePath.Text, sb.ToString());
+                // Use CodeFormatter to write the file with proper indentation
+                var formatter = new CodeFormatter(sb.ToString());
+                formatter.Namespace = namespaceValue;
+                formatter.WriteToFile(txtSavePath.Text);
 
                 this.DialogResult = DialogResult.OK;
                 this.Close();
@@ -606,14 +501,28 @@ namespace CidCodeComparer.Forms
             }
         }
 
-        private string IndentCode(string code, int level)
+        private string IndentCode(string code, int indentLevel)
         {
             if (string.IsNullOrEmpty(code))
-                return code;
+                return string.Empty;
 
-            var indent = new string(' ', level * 4);
             var lines = code.Split(new[] { "\r\n", "\r", "\n" }, StringSplitOptions.None);
-            return string.Join(Environment.NewLine, lines.Select(line => indent + line));
+            var indentedLines = new List<string>();
+            string indent = new string(' ', indentLevel * 4);
+
+            foreach (var line in lines)
+            {
+                if (string.IsNullOrWhiteSpace(line))
+                {
+                    indentedLines.Add(string.Empty);
+                }
+                else
+                {
+                    indentedLines.Add(indent + line.TrimStart());
+                }
+            }
+
+            return string.Join(Environment.NewLine, indentedLines);
         }
     }
 }

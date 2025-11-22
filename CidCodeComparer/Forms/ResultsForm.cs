@@ -1040,6 +1040,7 @@ namespace CidCodeComparer
             using (var wizard = new Forms.MergeWizardDialog(selectedClass1, selectedClass2,
                 _file1Nodes, _file2Nodes))
             {
+                wizard.WindowState = FormWindowState.Maximized;
                 if (wizard.ShowDialog(this) == DialogResult.OK)
                 {
                     MessageBox.Show("Class merge completed successfully!",

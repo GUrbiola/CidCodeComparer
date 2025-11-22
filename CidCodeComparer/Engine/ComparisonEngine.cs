@@ -9,6 +9,8 @@ namespace CidCodeComparer.Engine
 {
     public class ComparisonEngine
     {
+        public bool IgnoreWhitespace { get; set; } = true;
+
         public ComparisonResult CompareFiles(string file1Path, string file2Path, string fileType)
         {
             var result = new ComparisonResult
@@ -96,7 +98,7 @@ namespace CidCodeComparer.Engine
             {
                 for (int j = 1; j <= n; j++)
                 {
-                    if (file1[i - 1] == file2[j - 1])
+                    if (AreLinesEqual(file1[i - 1], file2[j - 1]))
                     {
                         dp[i, j] = dp[i - 1, j - 1] + 1;
                     }
@@ -112,7 +114,7 @@ namespace CidCodeComparer.Engine
 
             while (x > 0 && y > 0)
             {
-                if (file1[x - 1] == file2[y - 1])
+                if (AreLinesEqual(file1[x - 1], file2[y - 1]))
                 {
                     result.Add((x - 1, y - 1));
                     x--;
@@ -129,6 +131,21 @@ namespace CidCodeComparer.Engine
             }
 
             return result;
+        }
+
+        private bool AreLinesEqual(string line1, string line2)
+        {
+            if (IgnoreWhitespace)
+            {
+                // Remove all whitespace and compare
+                string normalized1 = new string(line1.Where(c => !char.IsWhiteSpace(c)).ToArray());
+                string normalized2 = new string(line2.Where(c => !char.IsWhiteSpace(c)).ToArray());
+                return normalized1 == normalized2;
+            }
+            else
+            {
+                return line1 == line2;
+            }
         }
     }
 }

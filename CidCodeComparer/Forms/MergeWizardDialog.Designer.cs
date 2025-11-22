@@ -18,19 +18,21 @@ namespace CidCodeComparer.Forms
         private void InitializeComponent()
         {
             this.panelGreenNodes = new System.Windows.Forms.Panel();
-            this.lblGreenQuestion = new System.Windows.Forms.Label();
-            this.txtGreenNodeInfo = new System.Windows.Forms.TextBox();
-            this.btnGreenAddThis = new System.Windows.Forms.Button();
-            this.btnGreenSkipThis = new System.Windows.Forms.Button();
-            this.btnGreenAddAll = new System.Windows.Forms.Button();
-            this.btnGreenSkipAll = new System.Windows.Forms.Button();
+            this.lblGreenTitle = new System.Windows.Forms.Label();
+            this.splitContainerGreen = new System.Windows.Forms.SplitContainer();
+            this.checkedListBoxGreen = new System.Windows.Forms.CheckedListBox();
+            this.panelGreenButtons = new System.Windows.Forms.Panel();
+            this.btnGreenSelectAll = new System.Windows.Forms.Button();
+            this.btnGreenSelectNone = new System.Windows.Forms.Button();
+            this.txtGreenPreview = new ICSharpCode.TextEditor.TextEditorControl();
             this.panelRedNodes = new System.Windows.Forms.Panel();
-            this.lblRedQuestion = new System.Windows.Forms.Label();
-            this.txtRedNodeInfo = new System.Windows.Forms.TextBox();
-            this.btnRedAddThis = new System.Windows.Forms.Button();
-            this.btnRedSkipThis = new System.Windows.Forms.Button();
-            this.btnRedAddAll = new System.Windows.Forms.Button();
-            this.btnRedSkipAll = new System.Windows.Forms.Button();
+            this.lblRedTitle = new System.Windows.Forms.Label();
+            this.splitContainerRed = new System.Windows.Forms.SplitContainer();
+            this.checkedListBoxRed = new System.Windows.Forms.CheckedListBox();
+            this.panelRedButtons = new System.Windows.Forms.Panel();
+            this.btnRedSelectAll = new System.Windows.Forms.Button();
+            this.btnRedSelectNone = new System.Windows.Forms.Button();
+            this.txtRedPreview = new ICSharpCode.TextEditor.TextEditorControl();
             this.panelYellowNodes = new System.Windows.Forms.Panel();
             this.lblYellowQuestion = new System.Windows.Forms.Label();
             this.diffViewer = new CidCodeComparer.Controls.DiffViewerControl();
@@ -40,13 +42,25 @@ namespace CidCodeComparer.Forms
             this.lblSaveLocation = new System.Windows.Forms.Label();
             this.txtSavePath = new System.Windows.Forms.TextBox();
             this.btnBrowse = new System.Windows.Forms.Button();
+            this.lblNamespace = new System.Windows.Forms.Label();
+            this.txtNamespace = new System.Windows.Forms.TextBox();
             this.panelNavigation = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
             this.btnFinish = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();
             this.panelGreenNodes.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerGreen)).BeginInit();
+            this.splitContainerGreen.Panel1.SuspendLayout();
+            this.splitContainerGreen.Panel2.SuspendLayout();
+            this.splitContainerGreen.SuspendLayout();
+            this.panelGreenButtons.SuspendLayout();
             this.panelRedNodes.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRed)).BeginInit();
+            this.splitContainerRed.Panel1.SuspendLayout();
+            this.splitContainerRed.Panel2.SuspendLayout();
+            this.splitContainerRed.SuspendLayout();
+            this.panelRedButtons.SuspendLayout();
             this.panelYellowNodes.SuspendLayout();
             this.panelSaveLocation.SuspendLayout();
             this.panelNavigation.SuspendLayout();
@@ -54,12 +68,8 @@ namespace CidCodeComparer.Forms
             //
             // panelGreenNodes
             //
-            this.panelGreenNodes.Controls.Add(this.lblGreenQuestion);
-            this.panelGreenNodes.Controls.Add(this.txtGreenNodeInfo);
-            this.panelGreenNodes.Controls.Add(this.btnGreenAddThis);
-            this.panelGreenNodes.Controls.Add(this.btnGreenSkipThis);
-            this.panelGreenNodes.Controls.Add(this.btnGreenAddAll);
-            this.panelGreenNodes.Controls.Add(this.btnGreenSkipAll);
+            this.panelGreenNodes.Controls.Add(this.splitContainerGreen);
+            this.panelGreenNodes.Controls.Add(this.lblGreenTitle);
             this.panelGreenNodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelGreenNodes.Location = new System.Drawing.Point(0, 0);
             this.panelGreenNodes.Name = "panelGreenNodes";
@@ -67,85 +77,92 @@ namespace CidCodeComparer.Forms
             this.panelGreenNodes.TabIndex = 0;
             this.panelGreenNodes.Visible = false;
             //
-            // lblGreenQuestion
+            // lblGreenTitle
             //
-            this.lblGreenQuestion.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblGreenQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.lblGreenQuestion.Location = new System.Drawing.Point(0, 0);
-            this.lblGreenQuestion.Name = "lblGreenQuestion";
-            this.lblGreenQuestion.Padding = new System.Windows.Forms.Padding(10);
-            this.lblGreenQuestion.Size = new System.Drawing.Size(800, 40);
-            this.lblGreenQuestion.TabIndex = 0;
-            this.lblGreenQuestion.Text = "Green Nodes Question";
+            this.lblGreenTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblGreenTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblGreenTitle.Location = new System.Drawing.Point(0, 0);
+            this.lblGreenTitle.Name = "lblGreenTitle";
+            this.lblGreenTitle.Padding = new System.Windows.Forms.Padding(10);
+            this.lblGreenTitle.Size = new System.Drawing.Size(800, 40);
+            this.lblGreenTitle.TabIndex = 0;
+            this.lblGreenTitle.Text = "Select members from LEFT class to add:";
             //
-            // txtGreenNodeInfo
+            // splitContainerGreen
             //
-            this.txtGreenNodeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtGreenNodeInfo.BackColor = System.Drawing.Color.LightGreen;
-            this.txtGreenNodeInfo.Font = new System.Drawing.Font("Consolas", 9F);
-            this.txtGreenNodeInfo.Location = new System.Drawing.Point(10, 50);
-            this.txtGreenNodeInfo.Multiline = true;
-            this.txtGreenNodeInfo.Name = "txtGreenNodeInfo";
-            this.txtGreenNodeInfo.ReadOnly = true;
-            this.txtGreenNodeInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtGreenNodeInfo.Size = new System.Drawing.Size(780, 390);
-            this.txtGreenNodeInfo.TabIndex = 1;
-            this.txtGreenNodeInfo.WordWrap = false;
+            this.splitContainerGreen.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerGreen.Location = new System.Drawing.Point(0, 40);
+            this.splitContainerGreen.Name = "splitContainerGreen";
+            this.splitContainerGreen.Size = new System.Drawing.Size(800, 460);
+            this.splitContainerGreen.SplitterDistance = 350;
+            this.splitContainerGreen.TabIndex = 1;
             //
-            // btnGreenAddThis
+            // splitContainerGreen.Panel1
             //
-            this.btnGreenAddThis.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnGreenAddThis.Location = new System.Drawing.Point(250, 450);
-            this.btnGreenAddThis.Name = "btnGreenAddThis";
-            this.btnGreenAddThis.Size = new System.Drawing.Size(100, 30);
-            this.btnGreenAddThis.TabIndex = 2;
-            this.btnGreenAddThis.Text = "Add This";
-            this.btnGreenAddThis.UseVisualStyleBackColor = true;
-            this.btnGreenAddThis.Click += new System.EventHandler(this.btnGreenAddThis_Click);
+            this.splitContainerGreen.Panel1.Controls.Add(this.checkedListBoxGreen);
+            this.splitContainerGreen.Panel1.Controls.Add(this.panelGreenButtons);
             //
-            // btnGreenSkipThis
+            // splitContainerGreen.Panel2
             //
-            this.btnGreenSkipThis.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnGreenSkipThis.Location = new System.Drawing.Point(450, 450);
-            this.btnGreenSkipThis.Name = "btnGreenSkipThis";
-            this.btnGreenSkipThis.Size = new System.Drawing.Size(100, 30);
-            this.btnGreenSkipThis.TabIndex = 3;
-            this.btnGreenSkipThis.Text = "Skip This";
-            this.btnGreenSkipThis.UseVisualStyleBackColor = true;
-            this.btnGreenSkipThis.Click += new System.EventHandler(this.btnGreenSkipThis_Click);
+            this.splitContainerGreen.Panel2.Controls.Add(this.txtGreenPreview);
             //
-            // btnGreenAddAll
+            // checkedListBoxGreen
             //
-            this.btnGreenAddAll.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnGreenAddAll.Location = new System.Drawing.Point(250, 450);
-            this.btnGreenAddAll.Name = "btnGreenAddAll";
-            this.btnGreenAddAll.Size = new System.Drawing.Size(100, 30);
-            this.btnGreenAddAll.TabIndex = 4;
-            this.btnGreenAddAll.Text = "Add All";
-            this.btnGreenAddAll.UseVisualStyleBackColor = true;
-            this.btnGreenAddAll.Click += new System.EventHandler(this.btnGreenAddAll_Click);
+            this.checkedListBoxGreen.BackColor = System.Drawing.Color.LightGreen;
+            this.checkedListBoxGreen.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxGreen.FormattingEnabled = true;
+            this.checkedListBoxGreen.Location = new System.Drawing.Point(0, 0);
+            this.checkedListBoxGreen.Name = "checkedListBoxGreen";
+            this.checkedListBoxGreen.Size = new System.Drawing.Size(350, 420);
+            this.checkedListBoxGreen.TabIndex = 0;
+            this.checkedListBoxGreen.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxGreen_SelectedIndexChanged);
             //
-            // btnGreenSkipAll
+            // panelGreenButtons
             //
-            this.btnGreenSkipAll.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnGreenSkipAll.Location = new System.Drawing.Point(450, 450);
-            this.btnGreenSkipAll.Name = "btnGreenSkipAll";
-            this.btnGreenSkipAll.Size = new System.Drawing.Size(100, 30);
-            this.btnGreenSkipAll.TabIndex = 5;
-            this.btnGreenSkipAll.Text = "Skip All";
-            this.btnGreenSkipAll.UseVisualStyleBackColor = true;
-            this.btnGreenSkipAll.Click += new System.EventHandler(this.btnGreenSkipAll_Click);
+            this.panelGreenButtons.Controls.Add(this.btnGreenSelectAll);
+            this.panelGreenButtons.Controls.Add(this.btnGreenSelectNone);
+            this.panelGreenButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelGreenButtons.Location = new System.Drawing.Point(0, 420);
+            this.panelGreenButtons.Name = "panelGreenButtons";
+            this.panelGreenButtons.Size = new System.Drawing.Size(350, 40);
+            this.panelGreenButtons.TabIndex = 1;
+            //
+            // btnGreenSelectAll
+            //
+            this.btnGreenSelectAll.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnGreenSelectAll.Location = new System.Drawing.Point(75, 8);
+            this.btnGreenSelectAll.Name = "btnGreenSelectAll";
+            this.btnGreenSelectAll.Size = new System.Drawing.Size(90, 25);
+            this.btnGreenSelectAll.TabIndex = 0;
+            this.btnGreenSelectAll.Text = "Select All";
+            this.btnGreenSelectAll.UseVisualStyleBackColor = true;
+            this.btnGreenSelectAll.Click += new System.EventHandler(this.btnGreenSelectAll_Click);
+            //
+            // btnGreenSelectNone
+            //
+            this.btnGreenSelectNone.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnGreenSelectNone.Location = new System.Drawing.Point(185, 8);
+            this.btnGreenSelectNone.Name = "btnGreenSelectNone";
+            this.btnGreenSelectNone.Size = new System.Drawing.Size(90, 25);
+            this.btnGreenSelectNone.TabIndex = 1;
+            this.btnGreenSelectNone.Text = "Select None";
+            this.btnGreenSelectNone.UseVisualStyleBackColor = true;
+            this.btnGreenSelectNone.Click += new System.EventHandler(this.btnGreenSelectNone_Click);
+            //
+            // txtGreenPreview
+            //
+            this.txtGreenPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtGreenPreview.IsReadOnly = true;
+            this.txtGreenPreview.Location = new System.Drawing.Point(0, 0);
+            this.txtGreenPreview.Name = "txtGreenPreview";
+            this.txtGreenPreview.ShowLineNumbers = true;
+            this.txtGreenPreview.Size = new System.Drawing.Size(446, 460);
+            this.txtGreenPreview.TabIndex = 0;
             //
             // panelRedNodes
             //
-            this.panelRedNodes.Controls.Add(this.lblRedQuestion);
-            this.panelRedNodes.Controls.Add(this.txtRedNodeInfo);
-            this.panelRedNodes.Controls.Add(this.btnRedAddThis);
-            this.panelRedNodes.Controls.Add(this.btnRedSkipThis);
-            this.panelRedNodes.Controls.Add(this.btnRedAddAll);
-            this.panelRedNodes.Controls.Add(this.btnRedSkipAll);
+            this.panelRedNodes.Controls.Add(this.splitContainerRed);
+            this.panelRedNodes.Controls.Add(this.lblRedTitle);
             this.panelRedNodes.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panelRedNodes.Location = new System.Drawing.Point(0, 0);
             this.panelRedNodes.Name = "panelRedNodes";
@@ -153,76 +170,87 @@ namespace CidCodeComparer.Forms
             this.panelRedNodes.TabIndex = 1;
             this.panelRedNodes.Visible = false;
             //
-            // lblRedQuestion
+            // lblRedTitle
             //
-            this.lblRedQuestion.Dock = System.Windows.Forms.DockStyle.Top;
-            this.lblRedQuestion.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.lblRedQuestion.Location = new System.Drawing.Point(0, 0);
-            this.lblRedQuestion.Name = "lblRedQuestion";
-            this.lblRedQuestion.Padding = new System.Windows.Forms.Padding(10);
-            this.lblRedQuestion.Size = new System.Drawing.Size(800, 40);
-            this.lblRedQuestion.TabIndex = 0;
-            this.lblRedQuestion.Text = "Red Nodes Question";
+            this.lblRedTitle.Dock = System.Windows.Forms.DockStyle.Top;
+            this.lblRedTitle.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblRedTitle.Location = new System.Drawing.Point(0, 0);
+            this.lblRedTitle.Name = "lblRedTitle";
+            this.lblRedTitle.Padding = new System.Windows.Forms.Padding(10);
+            this.lblRedTitle.Size = new System.Drawing.Size(800, 40);
+            this.lblRedTitle.TabIndex = 0;
+            this.lblRedTitle.Text = "Select members from RIGHT class to add:";
             //
-            // txtRedNodeInfo
+            // splitContainerRed
             //
-            this.txtRedNodeInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
-            | System.Windows.Forms.AnchorStyles.Left)
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.txtRedNodeInfo.BackColor = System.Drawing.Color.LightCoral;
-            this.txtRedNodeInfo.Font = new System.Drawing.Font("Consolas", 9F);
-            this.txtRedNodeInfo.Location = new System.Drawing.Point(10, 50);
-            this.txtRedNodeInfo.Multiline = true;
-            this.txtRedNodeInfo.Name = "txtRedNodeInfo";
-            this.txtRedNodeInfo.ReadOnly = true;
-            this.txtRedNodeInfo.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.txtRedNodeInfo.Size = new System.Drawing.Size(780, 390);
-            this.txtRedNodeInfo.TabIndex = 1;
-            this.txtRedNodeInfo.WordWrap = false;
+            this.splitContainerRed.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.splitContainerRed.Location = new System.Drawing.Point(0, 40);
+            this.splitContainerRed.Name = "splitContainerRed";
+            this.splitContainerRed.Size = new System.Drawing.Size(800, 460);
+            this.splitContainerRed.SplitterDistance = 350;
+            this.splitContainerRed.TabIndex = 1;
             //
-            // btnRedAddThis
+            // splitContainerRed.Panel1
             //
-            this.btnRedAddThis.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRedAddThis.Location = new System.Drawing.Point(250, 450);
-            this.btnRedAddThis.Name = "btnRedAddThis";
-            this.btnRedAddThis.Size = new System.Drawing.Size(100, 30);
-            this.btnRedAddThis.TabIndex = 2;
-            this.btnRedAddThis.Text = "Add This";
-            this.btnRedAddThis.UseVisualStyleBackColor = true;
-            this.btnRedAddThis.Click += new System.EventHandler(this.btnRedAddThis_Click);
+            this.splitContainerRed.Panel1.Controls.Add(this.checkedListBoxRed);
+            this.splitContainerRed.Panel1.Controls.Add(this.panelRedButtons);
             //
-            // btnRedSkipThis
+            // splitContainerRed.Panel2
             //
-            this.btnRedSkipThis.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRedSkipThis.Location = new System.Drawing.Point(450, 450);
-            this.btnRedSkipThis.Name = "btnRedSkipThis";
-            this.btnRedSkipThis.Size = new System.Drawing.Size(100, 30);
-            this.btnRedSkipThis.TabIndex = 3;
-            this.btnRedSkipThis.Text = "Skip This";
-            this.btnRedSkipThis.UseVisualStyleBackColor = true;
-            this.btnRedSkipThis.Click += new System.EventHandler(this.btnRedSkipThis_Click);
+            this.splitContainerRed.Panel2.Controls.Add(this.txtRedPreview);
             //
-            // btnRedAddAll
+            // checkedListBoxRed
             //
-            this.btnRedAddAll.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRedAddAll.Location = new System.Drawing.Point(250, 450);
-            this.btnRedAddAll.Name = "btnRedAddAll";
-            this.btnRedAddAll.Size = new System.Drawing.Size(100, 30);
-            this.btnRedAddAll.TabIndex = 4;
-            this.btnRedAddAll.Text = "Add All";
-            this.btnRedAddAll.UseVisualStyleBackColor = true;
-            this.btnRedAddAll.Click += new System.EventHandler(this.btnRedAddAll_Click);
+            this.checkedListBoxRed.BackColor = System.Drawing.Color.LightCoral;
+            this.checkedListBoxRed.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkedListBoxRed.FormattingEnabled = true;
+            this.checkedListBoxRed.Location = new System.Drawing.Point(0, 0);
+            this.checkedListBoxRed.Name = "checkedListBoxRed";
+            this.checkedListBoxRed.Size = new System.Drawing.Size(350, 420);
+            this.checkedListBoxRed.TabIndex = 0;
+            this.checkedListBoxRed.SelectedIndexChanged += new System.EventHandler(this.checkedListBoxRed_SelectedIndexChanged);
             //
-            // btnRedSkipAll
+            // panelRedButtons
             //
-            this.btnRedSkipAll.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnRedSkipAll.Location = new System.Drawing.Point(450, 450);
-            this.btnRedSkipAll.Name = "btnRedSkipAll";
-            this.btnRedSkipAll.Size = new System.Drawing.Size(100, 30);
-            this.btnRedSkipAll.TabIndex = 5;
-            this.btnRedSkipAll.Text = "Skip All";
-            this.btnRedSkipAll.UseVisualStyleBackColor = true;
-            this.btnRedSkipAll.Click += new System.EventHandler(this.btnRedSkipAll_Click);
+            this.panelRedButtons.Controls.Add(this.btnRedSelectAll);
+            this.panelRedButtons.Controls.Add(this.btnRedSelectNone);
+            this.panelRedButtons.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panelRedButtons.Location = new System.Drawing.Point(0, 420);
+            this.panelRedButtons.Name = "panelRedButtons";
+            this.panelRedButtons.Size = new System.Drawing.Size(350, 40);
+            this.panelRedButtons.TabIndex = 1;
+            //
+            // btnRedSelectAll
+            //
+            this.btnRedSelectAll.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnRedSelectAll.Location = new System.Drawing.Point(75, 8);
+            this.btnRedSelectAll.Name = "btnRedSelectAll";
+            this.btnRedSelectAll.Size = new System.Drawing.Size(90, 25);
+            this.btnRedSelectAll.TabIndex = 0;
+            this.btnRedSelectAll.Text = "Select All";
+            this.btnRedSelectAll.UseVisualStyleBackColor = true;
+            this.btnRedSelectAll.Click += new System.EventHandler(this.btnRedSelectAll_Click);
+            //
+            // btnRedSelectNone
+            //
+            this.btnRedSelectNone.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.btnRedSelectNone.Location = new System.Drawing.Point(185, 8);
+            this.btnRedSelectNone.Name = "btnRedSelectNone";
+            this.btnRedSelectNone.Size = new System.Drawing.Size(90, 25);
+            this.btnRedSelectNone.TabIndex = 1;
+            this.btnRedSelectNone.Text = "Select None";
+            this.btnRedSelectNone.UseVisualStyleBackColor = true;
+            this.btnRedSelectNone.Click += new System.EventHandler(this.btnRedSelectNone_Click);
+            //
+            // txtRedPreview
+            //
+            this.txtRedPreview.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.txtRedPreview.IsReadOnly = true;
+            this.txtRedPreview.Location = new System.Drawing.Point(0, 0);
+            this.txtRedPreview.Name = "txtRedPreview";
+            this.txtRedPreview.ShowLineNumbers = true;
+            this.txtRedPreview.Size = new System.Drawing.Size(446, 460);
+            this.txtRedPreview.TabIndex = 0;
             //
             // panelYellowNodes
             //
@@ -282,6 +310,8 @@ namespace CidCodeComparer.Forms
             //
             // panelSaveLocation
             //
+            this.panelSaveLocation.Controls.Add(this.lblNamespace);
+            this.panelSaveLocation.Controls.Add(this.txtNamespace);
             this.panelSaveLocation.Controls.Add(this.lblSaveLocation);
             this.panelSaveLocation.Controls.Add(this.txtSavePath);
             this.panelSaveLocation.Controls.Add(this.btnBrowse);
@@ -296,7 +326,7 @@ namespace CidCodeComparer.Forms
             //
             this.lblSaveLocation.Anchor = System.Windows.Forms.AnchorStyles.None;
             this.lblSaveLocation.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
-            this.lblSaveLocation.Location = new System.Drawing.Point(150, 200);
+            this.lblSaveLocation.Location = new System.Drawing.Point(150, 150);
             this.lblSaveLocation.Name = "lblSaveLocation";
             this.lblSaveLocation.Size = new System.Drawing.Size(500, 30);
             this.lblSaveLocation.TabIndex = 0;
@@ -306,7 +336,7 @@ namespace CidCodeComparer.Forms
             // txtSavePath
             //
             this.txtSavePath.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.txtSavePath.Location = new System.Drawing.Point(150, 240);
+            this.txtSavePath.Location = new System.Drawing.Point(150, 190);
             this.txtSavePath.Name = "txtSavePath";
             this.txtSavePath.Size = new System.Drawing.Size(400, 20);
             this.txtSavePath.TabIndex = 1;
@@ -314,13 +344,33 @@ namespace CidCodeComparer.Forms
             // btnBrowse
             //
             this.btnBrowse.Anchor = System.Windows.Forms.AnchorStyles.None;
-            this.btnBrowse.Location = new System.Drawing.Point(560, 238);
+            this.btnBrowse.Location = new System.Drawing.Point(560, 188);
             this.btnBrowse.Name = "btnBrowse";
             this.btnBrowse.Size = new System.Drawing.Size(90, 23);
             this.btnBrowse.TabIndex = 2;
             this.btnBrowse.Text = "Browse...";
             this.btnBrowse.UseVisualStyleBackColor = true;
             this.btnBrowse.Click += new System.EventHandler(this.btnBrowse_Click);
+            //
+            // lblNamespace
+            //
+            this.lblNamespace.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.lblNamespace.Font = new System.Drawing.Font("Microsoft Sans Serif", 10F, System.Drawing.FontStyle.Bold);
+            this.lblNamespace.Location = new System.Drawing.Point(150, 240);
+            this.lblNamespace.Name = "lblNamespace";
+            this.lblNamespace.Size = new System.Drawing.Size(500, 30);
+            this.lblNamespace.TabIndex = 3;
+            this.lblNamespace.Text = "Namespace for the merged class:";
+            this.lblNamespace.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            //
+            // txtNamespace
+            //
+            this.txtNamespace.Anchor = System.Windows.Forms.AnchorStyles.None;
+            this.txtNamespace.Location = new System.Drawing.Point(150, 280);
+            this.txtNamespace.Name = "txtNamespace";
+            this.txtNamespace.Size = new System.Drawing.Size(500, 20);
+            this.txtNamespace.TabIndex = 4;
+            this.txtNamespace.Text = "Default";
             //
             // panelNavigation
             //
@@ -396,9 +446,17 @@ namespace CidCodeComparer.Forms
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterParent;
             this.Text = "Merge Classes Wizard";
             this.panelGreenNodes.ResumeLayout(false);
-            this.panelGreenNodes.PerformLayout();
+            this.splitContainerGreen.Panel1.ResumeLayout(false);
+            this.splitContainerGreen.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerGreen)).EndInit();
+            this.splitContainerGreen.ResumeLayout(false);
+            this.panelGreenButtons.ResumeLayout(false);
             this.panelRedNodes.ResumeLayout(false);
-            this.panelRedNodes.PerformLayout();
+            this.splitContainerRed.Panel1.ResumeLayout(false);
+            this.splitContainerRed.Panel2.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)(this.splitContainerRed)).EndInit();
+            this.splitContainerRed.ResumeLayout(false);
+            this.panelRedButtons.ResumeLayout(false);
             this.panelYellowNodes.ResumeLayout(false);
             this.panelSaveLocation.ResumeLayout(false);
             this.panelSaveLocation.PerformLayout();
@@ -410,19 +468,21 @@ namespace CidCodeComparer.Forms
         #endregion
 
         private System.Windows.Forms.Panel panelGreenNodes;
-        private System.Windows.Forms.Label lblGreenQuestion;
-        private System.Windows.Forms.TextBox txtGreenNodeInfo;
-        private System.Windows.Forms.Button btnGreenAddThis;
-        private System.Windows.Forms.Button btnGreenSkipThis;
-        private System.Windows.Forms.Button btnGreenAddAll;
-        private System.Windows.Forms.Button btnGreenSkipAll;
+        private System.Windows.Forms.Label lblGreenTitle;
+        private System.Windows.Forms.SplitContainer splitContainerGreen;
+        private System.Windows.Forms.CheckedListBox checkedListBoxGreen;
+        private System.Windows.Forms.Panel panelGreenButtons;
+        private System.Windows.Forms.Button btnGreenSelectAll;
+        private System.Windows.Forms.Button btnGreenSelectNone;
+        private ICSharpCode.TextEditor.TextEditorControl txtGreenPreview;
         private System.Windows.Forms.Panel panelRedNodes;
-        private System.Windows.Forms.Label lblRedQuestion;
-        private System.Windows.Forms.TextBox txtRedNodeInfo;
-        private System.Windows.Forms.Button btnRedAddThis;
-        private System.Windows.Forms.Button btnRedSkipThis;
-        private System.Windows.Forms.Button btnRedAddAll;
-        private System.Windows.Forms.Button btnRedSkipAll;
+        private System.Windows.Forms.Label lblRedTitle;
+        private System.Windows.Forms.SplitContainer splitContainerRed;
+        private System.Windows.Forms.CheckedListBox checkedListBoxRed;
+        private System.Windows.Forms.Panel panelRedButtons;
+        private System.Windows.Forms.Button btnRedSelectAll;
+        private System.Windows.Forms.Button btnRedSelectNone;
+        private ICSharpCode.TextEditor.TextEditorControl txtRedPreview;
         private System.Windows.Forms.Panel panelYellowNodes;
         private System.Windows.Forms.Label lblYellowQuestion;
         private Controls.DiffViewerControl diffViewer;
@@ -432,6 +492,8 @@ namespace CidCodeComparer.Forms
         private System.Windows.Forms.Label lblSaveLocation;
         private System.Windows.Forms.TextBox txtSavePath;
         private System.Windows.Forms.Button btnBrowse;
+        private System.Windows.Forms.Label lblNamespace;
+        private System.Windows.Forms.TextBox txtNamespace;
         private System.Windows.Forms.Panel panelNavigation;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnNext;
