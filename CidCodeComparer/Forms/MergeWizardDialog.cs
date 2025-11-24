@@ -380,22 +380,15 @@ namespace CidCodeComparer.Forms
 
         private void btnNext_Click(object sender, EventArgs e)
         {
-            // Move to next step
-            if (_currentStep == 0)
+            // Skip forward (Next button skips all remaining yellow nodes if on step 2)
+            if (_currentStep == 2 && _currentYellowIndex < _yellowNodes.Count)
             {
-                _currentStep = 1;
-            }
-            else if (_currentStep == 1)
-            {
-                _currentStep = 2;
-                _currentYellowIndex = 0;
-            }
-            else if (_currentStep == 2 && _currentYellowIndex < _yellowNodes.Count)
-            {
+                // Skip all remaining yellow nodes
                 _currentYellowIndex = _yellowNodes.Count;
             }
             else
             {
+                // Move to next step
                 _currentStep++;
             }
 
@@ -404,6 +397,7 @@ namespace CidCodeComparer.Forms
 
         private void btnBack_Click(object sender, EventArgs e)
         {
+            // If on step 2 (yellow nodes) and not at first yellow node, go to previous yellow node
             if (_currentStep == 2 && _currentYellowIndex > 0)
             {
                 _currentYellowIndex--;
@@ -411,11 +405,44 @@ namespace CidCodeComparer.Forms
             }
             else if (_currentStep > 0)
             {
-                if (_currentStep == 2)
+                // Going back from a step - need to handle skipped steps
+                _currentStep--;
+
+                // Skip backwards over steps that have no content
+                while (_currentStep >= 0)
+                {
+                    if (_currentStep == 2 && _yellowNodes.Count == 0)
+                    {
+                        // No yellow nodes, skip step 2
+                        _currentStep--;
+                        continue;
+                    }
+                    if (_currentStep == 1 && _redNodes.Count == 0)
+                    {
+                        // No red nodes, skip step 1
+                        _currentStep--;
+                        continue;
+                    }
+                    if (_currentStep == 0 && _greenNodes.Count == 0)
+                    {
+                        // No green nodes, can't go before 0
+                        // If we're here, all steps are empty, stay at 0
+                        _currentStep = 0;
+                    }
+                    break;
+                }
+
+                // When going back to step 2, set to last yellow node
+                if (_currentStep == 2 && _yellowNodes.Count > 0)
+                {
+                    _currentYellowIndex = _yellowNodes.Count - 1;
+                }
+                // Reset yellow index when going back before step 2
+                else if (_currentStep < 2)
                 {
                     _currentYellowIndex = 0;
                 }
-                _currentStep--;
+
                 ShowCurrentStep();
             }
         }
