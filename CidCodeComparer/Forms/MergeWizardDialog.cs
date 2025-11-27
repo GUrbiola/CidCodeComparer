@@ -475,6 +475,51 @@ namespace CidCodeComparer.Forms
                 sb.AppendLine($"    public class {_class1.Name}");
                 sb.AppendLine("    {");
 
+                List<CodeNode> allMethods = new List<CodeNode>();
+                // Add white nodes (no differences)
+                allMethods.AddRange(_whiteNodes);
+                // Add selected green nodes
+                for (int i = 0; i < checkedListBoxGreen.Items.Count; i++)
+                    if (checkedListBoxGreen.GetItemChecked(i))
+                        allMethods.Add(_greenNodes[i]);
+                // Add selected red nodes
+                for (int i = 0; i < checkedListBoxRed.Items.Count; i++)
+                    if (checkedListBoxRed.GetItemChecked(i))
+                        allMethods.Add(_redNodes[i]);
+                // Add selected yellow nodes
+                foreach (var kvp in _yellowDecisions)
+                    allMethods.Add(kvp.Value);
+
+                allMethods.Sort((a, b) => {
+                    string param1, param2, name1, name2;
+                    if (a.Parameters != null && a.Parameters.Count > 0)
+                    {
+                        param1 = a.Parameters[0].Type;
+                        name1 = a.Name;
+                    }
+                    else
+                        param1 = name1 = "";
+
+                    if (b.Parameters != null && b.Parameters.Count > 0)
+                    {
+                        param2 = b.Parameters[0].Type;
+                        name2 = b.Name;
+                    }
+                    else
+                        param2 = name2 = "";
+
+                    return string.Compare($"{param1}{name1}", $"{param2}{name2}");
+                });
+
+
+                foreach (var node in allMethods)
+                {
+                    sb.AppendLine(IndentCode(node.SourceCode, 2));
+                    sb.AppendLine();
+                }
+
+
+                /*
                 // Add white nodes (no differences)
                 foreach (var node in _whiteNodes)
                 {
@@ -510,7 +555,7 @@ namespace CidCodeComparer.Forms
                     sb.AppendLine(IndentCode(kvp.Value.SourceCode, 2));
                     sb.AppendLine();
                 }
-
+                */
                 sb.AppendLine("    }");
                 sb.AppendLine("}");
 

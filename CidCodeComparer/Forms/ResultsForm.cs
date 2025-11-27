@@ -540,7 +540,8 @@ namespace CidCodeComparer
                 editor.ActiveTextAreaControl.SelectionManager.SetSelection(start, end);
 
                 // Use the extension method to scroll to the line and center it
-                editor.ScrollToLine(node.StartLine, centerInView: true);
+                editor.SetFirstPhysicalLineVisible(node.StartLine);
+                //editor.ScrollToLine(node.StartLine, centerInView: true);
             }
             catch
             {
